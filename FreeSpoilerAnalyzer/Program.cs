@@ -34,14 +34,21 @@ if(spoilerLogs.Count() < 100)
     return;
 }
 
+Console.WriteLine($"Starting to analyze {spoilerLogs.Count()} logs from {string.Join(", ", folders)}");
+
 foreach (var spoilerLog in spoilerLogs)
 {
     var keyItemPlacement = await SpoilerParser.ParseKeyItemPlacementAsync(spoilerLog);
     if (SpoilerAnalyzer.IsViaUnderground(keyItemPlacement, KeyItem.DarknessCrystal)) { undergroundCount++; };
     fileCount++;
+
+    if(fileCount % 500 == 0)
+    {
+        Console.WriteLine($"analyzed {fileCount} logs so far");
+    }
 }
 
 
-Console.WriteLine($"Total Files: {fileCount}\r\nDarkness via Underground: {undergroundCount}\r\nPercentage: {100.0 * (double)undergroundCount / (double)fileCount}");
+Console.WriteLine($"\r\nTotal Files: {fileCount}\r\nDarkness via Underground: {undergroundCount}\r\nPercentage: {100.0 * (double)undergroundCount / (double)fileCount}");
 Console.WriteLine("\r\nPress any key to close");
 Console.ReadKey();
