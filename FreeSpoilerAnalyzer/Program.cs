@@ -1,8 +1,10 @@
 ﻿using FreeSpoilerAnalyzer;
 using FreeSpoilerAnalyzer.Enums;
+using FreeSpoilerAnalyzer.Extensions;
 
 List<string> folders = [];
 FileInfo[] spoilerLogs = [];
+Dictionary<KeyItemLocation, int> darknessLocationCount= Enum.GetValues<KeyItemLocation>().ToDictionary(k => k, v => 0);
 
 var undergroundCount = 0;
 var fileCount = 0;
@@ -46,8 +48,31 @@ foreach (var spoilerLog in spoilerLogs)
     {
         Console.WriteLine($"analyzed {fileCount} logs so far");
     }
+
+    darknessLocationCount[keyItemPlacement[KeyItem.DarknessCrystal]]++;
 }
 
-Console.WriteLine($"\r\nTotal Files: {fileCount}\r\nDarkness via Underground: {undergroundCount}\r\nPercentage: {100.0 * (double)undergroundCount / (double)fileCount}");
+ReportDarknessUndergroundPercentage(fileCount, undergroundCount);
+ReportDarknessLocations(darknessLocationCount, fileCount);
 Console.WriteLine("\r\nPress any key to close");
+
 Console.ReadKey();
+
+
+static void ReportDarknessLocations(Dictionary<KeyItemLocation, int> locationData, int fileCount)
+{
+    foreach (var pair in locationData)
+    {
+        if (pair.Value == 0)
+        {
+            continue;
+        }
+
+        Console.WriteLine($"Darkness was at {pair.Key.GetDescription()} {pair.Value} times at {100.0 * (double)pair.Value / (double)fileCount}% of the time");
+    }
+}
+
+static void ReportDarknessUndergroundPercentage(int totalFileCount, int totalUndergroundCount)
+{
+    Console.WriteLine($"\r\nTotal Files: {totalFileCount}\r\nDarkness via Underground: {totalUndergroundCount}\r\nPercentage: {100.0 * (double)totalUndergroundCount / (double)totalFileCount}");
+}
