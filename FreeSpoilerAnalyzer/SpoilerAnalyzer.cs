@@ -6,6 +6,12 @@ namespace FreeSpoilerAnalyzer
 {
     public partial class SpoilerAnalyzer
     {
+        /// <summary>
+        /// Determines if the desired Key item requires any path through the Underground to access
+        /// </summary>
+        /// <param name="keyItemInfo"></param>
+        /// <param name="keyItem"></param>
+        /// <returns></returns>
         public static bool IsViaUnderground(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
         {
             if (!keyItemInfo.TryGetValue(keyItem, out var keyItemLocation)) return false;
@@ -23,6 +29,12 @@ namespace FreeSpoilerAnalyzer
             };
         }
 
+        /// <summary>
+        /// Determines how many player initiated checks it takes to find the Key Item
+        /// </summary>
+        /// <param name="keyItemInfo"></param>
+        /// <param name="keyItem"></param>
+        /// <returns>A count of all the checks required to find the item. Starting item is not counted</returns>
         public static int CheckCount(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
         {
             if (!keyItemInfo.TryGetValue(keyItem, out var keyItemLocation)) return 0;
