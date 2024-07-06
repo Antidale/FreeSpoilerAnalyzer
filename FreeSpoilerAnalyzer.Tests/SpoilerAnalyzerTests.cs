@@ -55,5 +55,78 @@ namespace FreeSpoilerAnalyzer.Tests
 
             result.Should().BeTrue("Darkness Crystal should be considered found via underground via the Pan bonk");
         }
+
+        [Fact]
+        public void CheckCount_Adds_Zero_ForStartingItem()
+        {
+            var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
+            {
+                [KeyItem.DarknessCrystal] = KeyItemLocation.Starting
+            };
+
+            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+
+            result.Should().Be(0, "The starting item doesn't count as a check since you can't avoid getting it");
+        }
+
+        [Fact]
+        public void CheckCount_Adds_One_ForUngatedLocations()
+        {
+            var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
+            {
+                [KeyItem.DarknessCrystal] = KeyItemLocation.Edward
+            };
+
+            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+
+            result.Should().Be(1, "An ungated, but not starting, location should count as one check");
+        }
+
+        [Fact]
+        public void CheckCount_CorrectlyAdds_StartingAndSingleGated()
+        {
+            var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
+            {
+                [KeyItem.DarknessCrystal] = KeyItemLocation.TowerOfZot,
+                [KeyItem.EarthCrystal] = KeyItemLocation.Starting
+            };
+
+            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+
+            result.Should().Be(1, "Starting item doesn't count, Earth Crystal is one check, leading to Darkness");
+        }
+
+        [Fact]
+        public void CheckCount_CorrectlyHandles_RatTailCounting()
+        {
+            var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
+            {
+                [KeyItem.Hook] = KeyItemLocation.TowerOfZot,
+                [KeyItem.RatTail] = KeyItemLocation.MtOrdeals,
+                [KeyItem.EarthCrystal] = KeyItemLocation.Starting,
+                [KeyItem.DarknessCrystal] = KeyItemLocation.RatTailTrade,
+            };
+
+            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+
+            result.Should().Be(3, "Starting Earth doesn't count, Both Hook and Rat are behind a single check, then add one for turning in the Rat Tail");
+        }
+
+        [Fact]
+        public void CheckCount_CorrectlyHandles_Or_GateType()
+        {
+            var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
+            {
+                [KeyItem.Hook] = KeyItemLocation.TowerOfZot,
+                [KeyItem.MagmaKey] = KeyItemLocation.MtOrdeals,
+                [KeyItem.TwinHarp] = KeyItemLocation.Starting,
+                [KeyItem.EarthCrystal] = KeyItemLocation.TwinHarp,
+                [KeyItem.DarknessCrystal] = KeyItemLocation.FeymarchFreebie,
+            };
+
+            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+
+            result.Should().Be(2, "Should use the path for Ordeals => Feymarch, and not Harp => Zot => Hook");
+        }
     }
 }

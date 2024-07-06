@@ -10,18 +10,33 @@ namespace FreeSpoilerAnalyzer
         {
             if (!keyItemInfo.TryGetValue(keyItem, out var keyItemLocation)) return false;
 
-            if (keyItemLocation.HasAttribute<UngatedAttribute>()) return false;
+            var gatingItems = keyItemLocation.GetAttributes<GatedByAttribute>();
+            var gateType = keyItemLocation.GetAttribute<GateTypeAttribute>();
 
-            if (keyItemLocation.GetAttribute<WorldAttribute>().Area == World.Underworld) return true;
+            return (keyItemLocation, keyItemLocation.GetAttribute<WorldAttribute>().Area, gateType.Type) switch
+            {
+                (KeyItemLocation.Starting, _, _) => false,
+                (_, World.Underworld, _) => true,
+                (_, _, GateType.And) => gatingItems.ToArray().Any(x => IsViaUnderground(keyItemInfo, x.GatingItem)),
+                (_, _, GateType.Or) => gatingItems.ToArray().Any(x => !IsViaUnderground(keyItemInfo, x.GatingItem)),
+                (_, _, _) => false
+            };
+        }
+
+        public static int CheckCount(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
+        {
+            if (!keyItemInfo.TryGetValue(keyItem, out var keyItemLocation)) return 0;
 
             var gatingItems = keyItemLocation.GetAttributes<GatedByAttribute>();
             var gateType = keyItemLocation.GetAttribute<GateTypeAttribute>();
 
-            return gateType.Type switch
+            return (keyItemLocation, gatingItems.ToArray().Length, gateType.Type) switch
             {
-                GateType.And => gatingItems.ToArray().Any(x => IsViaUnderground(keyItemInfo, x.GatingItem)),
-                GateType.Or => gatingItems.ToArray().Any(x => !IsViaUnderground(keyItemInfo, x.GatingItem)),
-                _ => false
+                (KeyItemLocation.Starting, _, _) => 0,
+                (_, < 1, _) => 1,
+                (_, _, GateType.And) => gatingItems.ToArray().Sum(x => CheckCount(keyItemInfo, x.GatingItem)) + 1,
+                (_, _, GateType.Or) => gatingItems.ToArray().Min(x => CheckCount(keyItemInfo, x.GatingItem)) + 1,
+                (_, _, _) => 0
             };
         }
     }
