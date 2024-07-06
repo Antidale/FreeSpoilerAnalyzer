@@ -42,7 +42,7 @@ namespace FreeSpoilerAnalyzer
             var gatingItems = keyItemLocation.GetAttributes<GatedByAttribute>();
             var gateType = keyItemLocation.GetAttribute<GateTypeAttribute>();
 
-            return (keyItemLocation, gatingItems.ToArray().Length, gateType.Type) switch
+            return (keyItemLocation, gatingItems.Length, gateType.Type) switch
             {
                 (KeyItemLocation.Starting, _, _) => 0,
                 (_, < 1, _) => 1,
