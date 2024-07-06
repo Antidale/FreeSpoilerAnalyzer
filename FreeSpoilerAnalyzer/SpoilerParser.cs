@@ -45,7 +45,7 @@ namespace FreeSpoilerAnalyzer
             return keyItems;
         }
 
-        [GeneratedRegex(@"(^[\w\s\.?/']+)\s\.{2,}\s([\w\s-()/\.']+)", RegexOptions.IgnoreCase, "en-US")]
-        private static partial Regex SpoilerKeyValueRegex();
+        [GeneratedRegex(@"(^[\w\s\-\(\)\.?/']+)\s\.{2,}\s([\w\s-()/\.']+)", RegexOptions.IgnoreCase, "en-US")]
+        public static partial Regex SpoilerKeyValueRegex();
     }
 }

@@ -1,5 +1,4 @@
 using FreeSpoilerAnalyzer.Enums;
-using FluentAssertions;
 
 namespace FreeSpoilerAnalyzer.Tests
 {
