@@ -28,13 +28,13 @@ foreach (var folder in folders)
     spoilerLogs = [.. spoilerLogs, .. directoryInfo.GetFiles(searchPattern: "*.spoiler.private")];
 }
 
-if(spoilerLogs.Count() < 100)
+if(spoilerLogs.Length < 100)
 {
     Console.WriteLine("Analyzer is for large amounts of files, please ensure you have at least 100");
     return;
 }
 
-Console.WriteLine($"Starting to analyze {spoilerLogs.Count()} logs from {string.Join(", ", folders)}");
+Console.WriteLine($"Starting to analyze {spoilerLogs.Length} logs from {string.Join(", ", folders)}");
 
 foreach (var spoilerLog in spoilerLogs)
 {
@@ -47,7 +47,6 @@ foreach (var spoilerLog in spoilerLogs)
         Console.WriteLine($"analyzed {fileCount} logs so far");
     }
 }
-
 
 Console.WriteLine($"\r\nTotal Files: {fileCount}\r\nDarkness via Underground: {undergroundCount}\r\nPercentage: {100.0 * (double)undergroundCount / (double)fileCount}");
 Console.WriteLine("\r\nPress any key to close");
