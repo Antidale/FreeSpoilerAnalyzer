@@ -41,9 +41,6 @@ if(spoilerLogs.Count < 100)
 
 Console.WriteLine($"Starting to analyze {spoilerLogs.Count} logs from {string.Join(", ", folders)}");
 
-var stopwatch = new Stopwatch();
-stopwatch.Start();
-
 await Parallel.ForEachAsync(spoilerLogs, async (log, token) => 
 {
     using (var streamReader = new StreamReader(log))
@@ -62,11 +59,6 @@ await Parallel.ForEachAsync(spoilerLogs, async (log, token) =>
         darknessLocationCount.AddOrUpdate(keyItemPlacement[KeyItem.DarknessCrystal], 1, (k,v) => v + 1);
     }
 });
-
-
-stopwatch.Stop();
-
-Console.WriteLine($"total analysis time {stopwatch.ElapsedMilliseconds}ms");
 
 ReportDarknessUndergroundPercentage(fileCount, undergroundCount);
 ReportDarknessLocations(darknessLocationCount.ToDictionary(), fileCount);
