@@ -7,12 +7,12 @@ namespace FreeSpoilerAnalyzer
 {
     public partial class SpoilerParser
     {
-        public static async Task<Dictionary<KeyItem, KeyItemLocation>> ParseKeyItemPlacementAsync(FileInfo fileInfo)
+        public async Task<Dictionary<KeyItem, KeyItemLocation>> ParseKeyItemPlacementAsync(StreamReader streamReader)
         {
             //Default the tracking dictionary to have everything in the overworld
             var keyItems = Enum.GetValues<KeyItem>().Where(x => (int)x > -1).ToDictionary(x => x, y => KeyItemLocation.Starting);
             var keyItemLocationsMap = Enum.GetValues<KeyItemLocation>().ToDictionary(key => key.GetDescription(), value => value);
-            using var streamReader = new StreamReader(fileInfo.FullName);
+            
 
             var currentLine = await streamReader.ReadLineAsync();
 

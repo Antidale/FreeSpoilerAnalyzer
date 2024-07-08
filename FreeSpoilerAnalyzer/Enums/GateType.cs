@@ -4,6 +4,7 @@
     {
         And,
         Or,
+        None,
         BossLocation
     }
 }

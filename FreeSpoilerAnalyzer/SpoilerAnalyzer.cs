@@ -1,31 +1,42 @@
 ﻿using FreeSpoilerAnalyzer.Attributes;
 using FreeSpoilerAnalyzer.Enums;
 using FreeSpoilerAnalyzer.Extensions;
+using System.Collections.Frozen;
+using System.Collections.ObjectModel;
 
 namespace FreeSpoilerAnalyzer
 {
-    public partial class SpoilerAnalyzer
+    
+
+    public class SpoilerAnalyzer
     {
+        static readonly FrozenDictionary<KeyItemLocation, GatedByAttribute[]> KeyItemLocationGating = Enum.GetValues<KeyItemLocation>().ToFrozenDictionary(key => key, value => value.GetAttributes<GatedByAttribute>().ToArray());
+        static readonly FrozenDictionary<KeyItemLocation, World> KeyItemWorlds = Enum.GetValues<KeyItemLocation>().ToFrozenDictionary(key => key, value => value.GetAttribute<WorldAttribute>().Area);
+
         /// <summary>
         /// Determines if the desired Key item requires any path through the Underground to access
         /// </summary>
         /// <param name="keyItemInfo"></param>
         /// <param name="keyItem"></param>
         /// <returns></returns>
-        public static bool IsViaUnderground(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
+        public bool IsViaUnderground(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
         {
+            var stuff = Enum.GetValues<KeyItemLocation>().ToFrozenDictionary(key => key, value => value.GetAttributes<GatedByAttribute>().ToArray());
+
             if (!keyItemInfo.TryGetValue(keyItem, out var keyItemLocation)) return false;
 
-            var gatingItems = keyItemLocation.GetAttributes<GatedByAttribute>();
+            if (KeyItemLocationGating[keyItemLocation].All(x => x.GatingItem == KeyItem.None)) return false;
+
+            if (KeyItemWorlds[keyItemLocation] == World.Underworld) return true;
+
+            
             var gateType = keyItemLocation.GetAttribute<GateTypeAttribute>();
 
-            return (keyItemLocation, keyItemLocation.GetAttribute<WorldAttribute>().Area, gateType.Type) switch
+            return gateType.Type switch
             {
-                (KeyItemLocation.Starting, _, _) => false,
-                (_, World.Underworld, _) => true,
-                (_, _, GateType.And) => gatingItems.ToArray().Any(x => IsViaUnderground(keyItemInfo, x.GatingItem)),
-                (_, _, GateType.Or) => gatingItems.ToArray().Any(x => !IsViaUnderground(keyItemInfo, x.GatingItem)),
-                (_, _, _) => false
+                GateType.And => KeyItemLocationGating[keyItemLocation].Any(x => IsViaUnderground(keyItemInfo, x.GatingItem)),
+                GateType.Or => KeyItemLocationGating[keyItemLocation].Any(x => !IsViaUnderground(keyItemInfo, x.GatingItem)),
+                _ => false
             };
         }
 
@@ -35,7 +46,7 @@ namespace FreeSpoilerAnalyzer
         /// <param name="keyItemInfo"></param>
         /// <param name="keyItem"></param>
         /// <returns>A count of all the checks required to find the item. Starting item is not counted</returns>
-        public static int CheckCount(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
+        public int CheckCount(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
         {
             if (!keyItemInfo.TryGetValue(keyItem, out var keyItemLocation)) return 0;
 

@@ -5,23 +5,23 @@ namespace FreeSpoilerAnalyzer.Enums
 {
     public enum KeyItemLocation
     {
-        [Ungated]
+        [GateType(GateType.None)]
         [Description("Starting item")]
         Starting,
 
-        [Ungated]
+        [GateType(GateType.None)]
         [Description("Antlion Nest item")] 
         Antlion,
 
-        [Ungated]
+        [GateType(GateType.None)]
         [Description("Defend Fabul reward item")]
         FabulDefense,
-        
-        [Ungated]
+
+        [GateType(GateType.None)]
         [Description("Mt. Ordeals item")]
         MtOrdeals,
 
-        [Ungated]
+        [GateType(GateType.None)]
         [Description("Baron Inn item")]
         BaronInn,
 
@@ -40,11 +40,12 @@ namespace FreeSpoilerAnalyzer.Enums
         [GatedBy(KeyItem.EarthCrystal)]
         [Description("Zot item")]
         TowerOfZot,
-        
-        [Ungated]
+
+        [GateType(GateType.None)]
         [Description("Edward/Toroia item")]
         Edward,
 
+        [GateType(GateType.BossLocation)]
         [Description("D.Mist/Rydia's Mom item")]
         DMist,
 

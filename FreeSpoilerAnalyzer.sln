@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreeSpoilerAnalyzer", "FreeSpoilerAnalyzer\FreeSpoilerAnalyzer.csproj", "{8A54471B-339D-4B32-AAE1-9EDF6A2C0AFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeSpoilerAnalyzer.Tests", "FreeSpoilerAnalyzer.Tests\FreeSpoilerAnalyzer.Tests.csproj", "{DC7065D2-845B-4488-BD97-9EDDEAF29428}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreeSpoilerAnalyzer.Tests", "FreeSpoilerAnalyzer.Tests\FreeSpoilerAnalyzer.Tests.csproj", "{DC7065D2-845B-4488-BD97-9EDDEAF29428}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

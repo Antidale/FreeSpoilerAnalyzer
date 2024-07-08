@@ -4,6 +4,14 @@ namespace FreeSpoilerAnalyzer.Tests
 {
     public class SpoilerAnalyzerTests
     {
+        SpoilerAnalyzer _analyzer;
+
+        public SpoilerAnalyzerTests()
+        {
+            _analyzer = new SpoilerAnalyzer();
+        }
+        
+
         [Fact]
         public void CorrectlyAnalyzes_RatTail_UndergroundGate_OnlyOneUnderground()
         {
@@ -14,7 +22,7 @@ namespace FreeSpoilerAnalyzer.Tests
                 [KeyItem.DarknessCrystal] = KeyItemLocation.RatTailTrade
             };
 
-            var result = SpoilerAnalyzer.IsViaUnderground(keyItemInfo, KeyItem.DarknessCrystal);
+            var result = _analyzer.IsViaUnderground(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().BeTrue("Darkness Crystal should be underground if either part of the rat tail turn in is");
         }
@@ -29,7 +37,7 @@ namespace FreeSpoilerAnalyzer.Tests
                 [KeyItem.DarknessCrystal] = KeyItemLocation.RatTailTrade
             };
 
-            var result = SpoilerAnalyzer.IsViaUnderground(keyItemInfo, KeyItem.DarknessCrystal);
+            var result = _analyzer.IsViaUnderground(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().BeFalse("Darkness Crystal should be not found via underground if neither part of the rat tail turn in is");
         }
@@ -51,7 +59,7 @@ namespace FreeSpoilerAnalyzer.Tests
                 [KeyItem.DarknessCrystal] = KeyItemLocation.RatTailTrade
             };
 
-            var result = SpoilerAnalyzer.IsViaUnderground(keyItemInfo, KeyItem.DarknessCrystal);
+            var result = _analyzer.IsViaUnderground(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().BeTrue("Darkness Crystal should be considered found via underground via the Pan bonk");
         }
@@ -64,7 +72,7 @@ namespace FreeSpoilerAnalyzer.Tests
                 [KeyItem.DarknessCrystal] = KeyItemLocation.Starting
             };
 
-            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+            var result = _analyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().Be(0, "The starting item doesn't count as a check since you can't avoid getting it");
         }
@@ -77,7 +85,7 @@ namespace FreeSpoilerAnalyzer.Tests
                 [KeyItem.DarknessCrystal] = KeyItemLocation.Edward
             };
 
-            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+            var result = _analyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().Be(1, "An ungated, but not starting, location should count as one check");
         }
@@ -91,7 +99,7 @@ namespace FreeSpoilerAnalyzer.Tests
                 [KeyItem.EarthCrystal] = KeyItemLocation.Starting
             };
 
-            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+            var result = _analyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().Be(1, "Starting item doesn't count, Earth Crystal is one check, leading to Darkness");
         }
@@ -107,7 +115,7 @@ namespace FreeSpoilerAnalyzer.Tests
                 [KeyItem.DarknessCrystal] = KeyItemLocation.RatTailTrade,
             };
 
-            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+            var result = _analyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().Be(3, "Starting Earth doesn't count, Both Hook and Rat are behind a single check, then add one for turning in the Rat Tail");
         }
@@ -124,7 +132,7 @@ namespace FreeSpoilerAnalyzer.Tests
                 [KeyItem.DarknessCrystal] = KeyItemLocation.FeymarchFreebie,
             };
 
-            var result = SpoilerAnalyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+            var result = _analyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().Be(2, "Should use the path for Ordeals => Feymarch, and not Harp => Zot => Hook");
         }

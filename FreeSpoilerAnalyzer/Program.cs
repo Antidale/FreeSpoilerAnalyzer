@@ -1,10 +1,13 @@
 ﻿using FreeSpoilerAnalyzer;
 using FreeSpoilerAnalyzer.Enums;
 using FreeSpoilerAnalyzer.Extensions;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 
 List<string> folders = [];
-FileInfo[] spoilerLogs = [];
-Dictionary<KeyItemLocation, int> darknessLocationCount= Enum.GetValues<KeyItemLocation>().ToDictionary(k => k, v => 0);
+List<string> spoilerLogs = [];
+int MaxConcurrencyLevel = Environment.ProcessorCount;
+ConcurrentDictionary<KeyItemLocation, int> darknessLocationCount = new ConcurrentDictionary<KeyItemLocation, int>(MaxConcurrencyLevel, capacity: 28);
 
 var undergroundCount = 0;
 var fileCount = 0;
@@ -27,33 +30,46 @@ if (folders.Count < 1)
 foreach (var folder in folders)
 {
     var directoryInfo = new DirectoryInfo(folder);
-    spoilerLogs = [.. spoilerLogs, .. directoryInfo.GetFiles(searchPattern: "*.spoiler.private")];
+    spoilerLogs = [.. spoilerLogs, .. directoryInfo.GetFiles(searchPattern: "*.spoiler.private").Select(x => x.FullName)];
 }
 
-if(spoilerLogs.Length < 100)
+if(spoilerLogs.Count < 100)
 {
     Console.WriteLine("Analyzer is for large amounts of files, please ensure you have at least 100");
     return;
 }
 
-Console.WriteLine($"Starting to analyze {spoilerLogs.Length} logs from {string.Join(", ", folders)}");
+Console.WriteLine($"Starting to analyze {spoilerLogs.Count} logs from {string.Join(", ", folders)}");
 
-foreach (var spoilerLog in spoilerLogs)
+var stopwatch = new Stopwatch();
+stopwatch.Start();
+
+await Parallel.ForEachAsync(spoilerLogs, async (log, token) => 
 {
-    var keyItemPlacement = await SpoilerParser.ParseKeyItemPlacementAsync(spoilerLog);
-    if (SpoilerAnalyzer.IsViaUnderground(keyItemPlacement, KeyItem.DarknessCrystal)) { undergroundCount++; };
-    fileCount++;
-
-    if(fileCount % 500 == 0)
+    using (var streamReader = new StreamReader(log))
     {
-        Console.WriteLine($"analyzed {fileCount} logs so far");
-    }
+        var parser = new SpoilerParser();
+        var analyzer = new SpoilerAnalyzer();
+        var keyItemPlacement = await parser.ParseKeyItemPlacementAsync(streamReader);
+        if (analyzer.IsViaUnderground(keyItemPlacement, KeyItem.DarknessCrystal)) { Interlocked.Increment(ref undergroundCount); };
+        Interlocked.Increment(ref fileCount);
 
-    darknessLocationCount[keyItemPlacement[KeyItem.DarknessCrystal]]++;
-}
+        if (fileCount % 2000 == 0)
+        {
+            Console.WriteLine($"analyzed {fileCount} logs so far");
+        }
+
+        darknessLocationCount.AddOrUpdate(keyItemPlacement[KeyItem.DarknessCrystal], 1, (k,v) => v + 1);
+    }
+});
+
+
+stopwatch.Stop();
+
+Console.WriteLine($"total analysis time {stopwatch.ElapsedMilliseconds}ms");
 
 ReportDarknessUndergroundPercentage(fileCount, undergroundCount);
-ReportDarknessLocations(darknessLocationCount, fileCount);
+ReportDarknessLocations(darknessLocationCount.ToDictionary(), fileCount);
 Console.WriteLine("\r\nPress any key to close");
 
 Console.ReadKey();
@@ -76,3 +92,4 @@ static void ReportDarknessUndergroundPercentage(int totalFileCount, int totalUnd
 {
     Console.WriteLine($"\r\nTotal Files: {totalFileCount}\r\nDarkness via Underground: {totalUndergroundCount}\r\nPercentage: {100.0 * (double)totalUndergroundCount / (double)totalFileCount}");
 }
+
