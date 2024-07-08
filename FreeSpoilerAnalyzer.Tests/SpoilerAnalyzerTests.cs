@@ -125,16 +125,48 @@ namespace FreeSpoilerAnalyzer.Tests
         {
             var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
             {
-                [KeyItem.Hook] = KeyItemLocation.TowerOfZot,
+                //Short path
                 [KeyItem.MagmaKey] = KeyItemLocation.MtOrdeals,
+
+                //Longer path
                 [KeyItem.TwinHarp] = KeyItemLocation.Starting,
                 [KeyItem.EarthCrystal] = KeyItemLocation.TwinHarp,
+                [KeyItem.Hook] = KeyItemLocation.TowerOfZot,
+
+                //Location with GateType.Or
                 [KeyItem.DarknessCrystal] = KeyItemLocation.FeymarchFreebie,
+
             };
 
             var result = _analyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().Be(2, "Should use the path for Ordeals => Feymarch, and not Harp => Zot => Hook");
+        }
+
+        [Fact]
+        public void CheckCount_CorrectlyHandles_Or_GateTypeWithExtraSteps()
+        {
+            var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
+            {
+                //Short path
+                [KeyItem.MagmaKey] = KeyItemLocation.MtOrdeals,
+
+                //Longer path
+                [KeyItem.TwinHarp] = KeyItemLocation.Starting,
+                [KeyItem.EarthCrystal] = KeyItemLocation.TwinHarp,
+                [KeyItem.Hook] = KeyItemLocation.TowerOfZot,
+
+                //Shared Extra Check
+                [KeyItem.TowerKey] = KeyItemLocation.DwarfCastle,
+
+                //Location with GateType.Or
+                [KeyItem.DarknessCrystal] = KeyItemLocation.SuperCannon,
+
+            };
+
+            var result = _analyzer.CheckCount(keyItemInfo, KeyItem.DarknessCrystal);
+
+            result.Should().Be(3, "Should use the path for Ordeals => Dwarf => TowerKey, and not Harp => Zot => Hook => Dwarf => TowerKey");
         }
     }
 }

@@ -49,79 +49,66 @@ namespace FreeSpoilerAnalyzer.Enums
         [Description("D.Mist/Rydia's Mom item")]
         DMist,
 
-        [GatedBy(KeyItem.Hook)]
-        [GatedBy(KeyItem.RatTail)]
-        [GateType(GateType.And)]
+        [GatedBy(KeyItem.Hook, KeyItem.RatTail)]
         [Description("Rat Tail trade item")]
         RatTailTrade,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
-        [GateType(GateType.Or)]
         [Description("Dwarf Castle/Luca item")]
         [World(World.Underworld)]
         DwarfCastle,
 
-        [GatedBy(KeyItem.Hook)]
-        [GatedBy(KeyItem.MagmaKey)]
-        [GateType(GateType.Or)]
+        [GatedBy(KeyItem.Hook, KeyItem.TowerKey)]
+        [GatedBy(KeyItem.MagmaKey, KeyItem.TowerKey)]
         [Description("Super Cannon destruction item")]
         [World(World.Underworld)]
         SuperCannon,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
-        [GateType(GateType.Or)]
         [Description("Lower Bab-il item (Tower Key slot)")]
         [World(World.Underworld)]
         LowerBabil,
 
-        [GatedBy(KeyItem.Hook)]
-        [GatedBy(KeyItem.MagmaKey)]
-        [GateType(GateType.Or)]
+        [GatedBy(KeyItem.Hook, KeyItem.LucaKey)]
+        [GatedBy(KeyItem.MagmaKey, KeyItem.LucaKey)]
         [Description("Sealed Cave item")]
         [World(World.Underworld)]
         SealedCave,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
-        [GateType(GateType.Or)]
         [Description("Found Yang item (Pan slot)")]
         [World(World.Underworld)]
         Sheila1,
 
-        [GatedBy(KeyItem.Hook)]
-        [GatedBy(KeyItem.MagmaKey)]
-        [GateType(GateType.Or)]
+        [GatedBy(KeyItem.Hook, KeyItem.Pan)]
+        [GatedBy(KeyItem.MagmaKey, KeyItem.Pan)]
         [Description("Pan trade item (Spoon slot)")]
         [World(World.Underworld)]
         Sheila2,
 
-        [GatedBy(KeyItem.Hook)]
-        [GatedBy(KeyItem.MagmaKey)]
-        [GatedBy(KeyItem.Pan)]
-        [GateType(GateType.And)]
+        [GatedBy(KeyItem.Hook, KeyItem.Pan)]
+        [GatedBy(KeyItem.MagmaKey, KeyItem.Pan)]
         [Description("Wake Yang item (Sylph slot)")]
         [World(World.Underworld)]
         PanBonk,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
-        [GateType(GateType.Or)]
         [Description("Town of Monsters chest item")]
         [World(World.Underworld)]
         FeymarchFreebie,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
-        [GateType(GateType.Or)]
         [Description("Town of Monsters queen item (Asura slot)")]
         [World(World.Underworld)]
         FeymarchQueen,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
-        [GateType(GateType.Or)]
         [Description("Town of Monsters king item (Levia slot)")]
         [World(World.Underworld)]
         FeymarchKing,
