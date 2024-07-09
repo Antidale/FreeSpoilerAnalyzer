@@ -2,7 +2,6 @@
 using FreeSpoilerAnalyzer.Enums;
 using FreeSpoilerAnalyzer.Extensions;
 using System.Collections.Frozen;
-using System.Collections.ObjectModel;
 
 namespace FreeSpoilerAnalyzer
 {
@@ -21,8 +20,6 @@ namespace FreeSpoilerAnalyzer
         /// <returns></returns>
         public bool IsViaUnderground(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
         {
-            var stuff = Enum.GetValues<KeyItemLocation>().ToFrozenDictionary(key => key, value => value.GetAttributes<GatedByAttribute>().ToArray());
-
             if (!keyItemInfo.TryGetValue(keyItem, out var keyItemLocation)) return false;
 
             if (KeyItemLocationGating[keyItemLocation].All(x => x.GatingItem == KeyItem.None)) return false;

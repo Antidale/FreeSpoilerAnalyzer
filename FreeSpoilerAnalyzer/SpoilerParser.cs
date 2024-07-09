@@ -12,7 +12,6 @@ namespace FreeSpoilerAnalyzer
             //Default the tracking dictionary to have everything in the overworld
             var keyItems = Enum.GetValues<KeyItem>().Where(x => (int)x > -1).ToDictionary(x => x, y => KeyItemLocation.Starting);
             var keyItemLocationsMap = Enum.GetValues<KeyItemLocation>().ToDictionary(key => key.GetDescription(), value => value);
-            
 
             var currentLine = await streamReader.ReadLineAsync();
 
