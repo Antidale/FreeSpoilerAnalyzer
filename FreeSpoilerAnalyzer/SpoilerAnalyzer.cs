@@ -5,7 +5,6 @@ using System.Collections.Frozen;
 
 namespace FreeSpoilerAnalyzer
 {
-    
 
     public class SpoilerAnalyzer
     {
@@ -26,12 +25,11 @@ namespace FreeSpoilerAnalyzer
 
             if (KeyItemWorlds[keyItemLocation] == World.Underworld) return true;
 
-            
             var gateType = keyItemLocation.GetAttribute<GateTypeAttribute>();
 
             return gateType.Type switch
             {
-                GateType.And => KeyItemLocationGating[keyItemLocation].Any(x => IsViaUnderground(keyItemInfo, x.GatingItem)),
+                GateType.And => KeyItemLocationGating[keyItemLocation].SelectMany(x => x.GetGatingItems()).Any(x => IsViaUnderground(keyItemInfo, x)),
                 GateType.Or => KeyItemLocationGating[keyItemLocation].Any(x => !IsViaUnderground(keyItemInfo, x.GatingItem)),
                 _ => false
             };
