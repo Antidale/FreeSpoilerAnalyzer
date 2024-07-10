@@ -3,18 +3,15 @@
 namespace FreeSpoilerAnalyzer.Attributes
 {
     [AttributeUsage(AttributeTargets.Field)]
-    public class WorldAttribute : Attribute 
+    public class WorldAttribute : Attribute
     {
-        public World Area { get; set; }
+        public World World { get; set; }
 
-        public WorldAttribute()
-        {
-            
-        }
+        public WorldAttribute() { }
 
-        public WorldAttribute(World area)
+        public WorldAttribute(World world)
         {
-            Area = area;
+            World = world;
         }
     }
 }

@@ -5,9 +5,17 @@
     /// </summary>
     public enum World
     {
-        //Explicitly set Overworld to 0/default value
+        /// <summary>
+        /// Any location that is neither gated by Moon nor Underground access. Can still be gated by other KI
+        /// </summary>
         Overworld = 0,
+        /// <summary>
+        /// Any location gated by either Hook or Magma
+        /// </summary>
         Underworld,
+        /// <summary>
+        /// Any location gated by the Darkness Crystal
+        /// </summary>
         Moon
     }
 }

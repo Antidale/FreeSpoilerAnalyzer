@@ -19,8 +19,7 @@ namespace FreeSpoilerAnalyzer.Attributes
 
         public IEnumerable<KeyItem> GetGatingItems() => gatingItems.Where(x => !x.Equals(KeyItem.None));
 
-        private List<KeyItem> gatingItems = [];
-
+        private readonly List<KeyItem> gatingItems = [];
 
         public GateType GateType { get; set; } = GateType.And;
 

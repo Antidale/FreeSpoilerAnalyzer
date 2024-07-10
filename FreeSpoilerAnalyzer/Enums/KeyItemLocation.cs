@@ -10,7 +10,7 @@ namespace FreeSpoilerAnalyzer.Enums
         Starting,
 
         [GateType(GateType.None)]
-        [Description("Antlion Nest item")] 
+        [Description("Antlion Nest item")]
         Antlion,
 
         [GateType(GateType.None)]
@@ -61,6 +61,7 @@ namespace FreeSpoilerAnalyzer.Enums
 
         [GatedBy(KeyItem.Hook, KeyItem.TowerKey)]
         [GatedBy(KeyItem.MagmaKey, KeyItem.TowerKey)]
+        [GateType(GateType.Or)]
         [Description("Super Cannon destruction item")]
         [World(World.Underworld)]
         SuperCannon,
@@ -73,12 +74,14 @@ namespace FreeSpoilerAnalyzer.Enums
 
         [GatedBy(KeyItem.Hook, KeyItem.LucaKey)]
         [GatedBy(KeyItem.MagmaKey, KeyItem.LucaKey)]
+        [GateType(GateType.Or)]
         [Description("Sealed Cave item")]
         [World(World.Underworld)]
         SealedCave,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
+        [GateType(GateType.Or)]
         [Description("Found Yang item (Pan slot)")]
         [World(World.Underworld)]
         Sheila1,
@@ -91,24 +94,28 @@ namespace FreeSpoilerAnalyzer.Enums
 
         [GatedBy(KeyItem.Hook, KeyItem.Pan)]
         [GatedBy(KeyItem.MagmaKey, KeyItem.Pan)]
+        [GateType(GateType.Or)]
         [Description("Wake Yang item (Sylph slot)")]
         [World(World.Underworld)]
         PanBonk,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
+        [GateType(GateType.Or)]
         [Description("Town of Monsters chest item")]
         [World(World.Underworld)]
         FeymarchFreebie,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
+        [GateType(GateType.Or)]
         [Description("Town of Monsters queen item (Asura slot)")]
         [World(World.Underworld)]
         FeymarchQueen,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
+        [GateType(GateType.Or)]
         [Description("Town of Monsters king item (Levia slot)")]
         [World(World.Underworld)]
         FeymarchKing,
@@ -147,6 +154,6 @@ namespace FreeSpoilerAnalyzer.Enums
         [Description("Lunar Subterrane altar 4 (Masamune slot)")]
         [World(World.Moon)]
         MasamuneAltar,
-        
+
     }
 }
