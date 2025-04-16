@@ -6,3 +6,5 @@ obj/*
 bin/*
 .vs
 */*.csproj.user
+.idea
+*.sln.DotSettings.user

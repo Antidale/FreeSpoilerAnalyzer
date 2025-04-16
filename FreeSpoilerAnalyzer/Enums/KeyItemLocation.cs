@@ -48,6 +48,12 @@ namespace FreeSpoilerAnalyzer.Enums
         [GateType(GateType.BossLocation)]
         [Description("D.Mist/Rydia's Mom item")]
         DMist,
+        
+        [GatedBy(KeyItem.Hook)]
+        [GatedBy(KeyItem.MagmaKey)]
+        [GateType(GateType.Or)]
+        [Description("Dwarf Castle hospital item")]
+        BedCid,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.RatTail)]
