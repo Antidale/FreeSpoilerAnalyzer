@@ -1,12 +1,11 @@
-﻿using FreeSpoilerAnalyzer.Attributes;
+﻿using System.Collections.Frozen;
+using FreeSpoilerAnalyzer.Attributes;
 using FreeSpoilerAnalyzer.Enums;
 using FreeSpoilerAnalyzer.Extensions;
-using System.Collections.Frozen;
-using System.Collections.ObjectModel;
 
 namespace FreeSpoilerAnalyzer
 {
-    
+
 
     public class SpoilerAnalyzer
     {
@@ -29,7 +28,7 @@ namespace FreeSpoilerAnalyzer
 
             if (KeyItemWorlds[keyItemLocation] == World.Underworld) return true;
 
-            
+
             var gateType = keyItemLocation.GetAttribute<GateTypeAttribute>();
 
             return gateType.Type switch
@@ -37,6 +36,34 @@ namespace FreeSpoilerAnalyzer
                 GateType.And => KeyItemLocationGating[keyItemLocation].Any(x => IsViaUnderground(keyItemInfo, x.GatingItem)),
                 GateType.Or => KeyItemLocationGating[keyItemLocation].Any(x => !IsViaUnderground(keyItemInfo, x.GatingItem)),
                 _ => false
+            };
+        }
+
+        /// <summary>
+        /// Determines if the desired Key item requires any path through the Underground to access
+        /// </summary>
+        /// <param name="keyItemInfo"></param>
+        /// <param name="keyItem"></param>
+        /// <returns></returns>
+        public bool IsViaOverworldOnly(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
+        {
+
+            var stuff = Enum.GetValues<KeyItemLocation>().ToFrozenDictionary(key => key, value => value.GetAttributes<GatedByAttribute>().ToArray());
+
+            if (!keyItemInfo.TryGetValue(keyItem, out var keyItemLocation)) return false;
+
+            if (KeyItemLocationGating[keyItemLocation].All(x => x.GatingItem == KeyItem.None)) return true;
+
+            if (KeyItemWorlds[keyItemLocation] != World.Overworld) return false;
+
+
+            var gateType = keyItemLocation.GetAttribute<GateTypeAttribute>();
+
+            return gateType.Type switch
+            {
+                GateType.And => KeyItemLocationGating[keyItemLocation].All(x => IsViaOverworldOnly(keyItemInfo, x.GatingItem)),
+                GateType.Or => KeyItemLocationGating[keyItemLocation].Any(x => IsViaOverworldOnly(keyItemInfo, x.GatingItem)),
+                _ => true
             };
         }
 
