@@ -1,16 +1,20 @@
-﻿using FreeSpoilerAnalyzer.Attributes;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using FreeSpoilerAnalyzer.Attributes;
 
 namespace FreeSpoilerAnalyzer.Enums
 {
     public enum KeyItemLocation
     {
         [GateType(GateType.None)]
+        [Description("(not available)")]
+        Unavailable,
+
+        [GateType(GateType.None)]
         [Description("Starting item")]
         Starting,
 
         [GateType(GateType.None)]
-        [Description("Antlion Nest item")] 
+        [Description("Antlion Nest item")]
         Antlion,
 
         [GateType(GateType.None)]
@@ -48,7 +52,7 @@ namespace FreeSpoilerAnalyzer.Enums
         [GateType(GateType.BossLocation)]
         [Description("D.Mist/Rydia's Mom item")]
         DMist,
-        
+
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
         [GateType(GateType.Or)]
@@ -60,6 +64,12 @@ namespace FreeSpoilerAnalyzer.Enums
         [GateType(GateType.And)]
         [Description("Rat Tail trade item")]
         RatTailTrade,
+
+        [GatedBy(KeyItem.Hook)]
+        [GatedBy(KeyItem.RatTail)]
+        [GateType(GateType.And)]
+        [Description("Pink Tail trade item")]
+        PinkTailTrade,
 
         [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
@@ -112,6 +122,33 @@ namespace FreeSpoilerAnalyzer.Enums
         PanBonk,
 
         [GatedBy(KeyItem.Hook)]
+        [GatedBy(KeyItem.RatTail)]
+        [GatedBy(KeyItem.Adamant)]
+        [GatedBy(KeyItem.LegendSword)]
+        [Description("Rat Tail trade item")]
+        ForgeItem,
+
+        [GateType(GateType.None)]
+        [Description("Eblan Castle MIAB")]
+        EblanCastleMiab,
+
+        [GateType(GateType.None)]
+        [Description("Tower of Zot MIAB")]
+        FlameDog,
+
+        [GateType(GateType.None)]
+        [Description("Cave Eblan MIAB")]
+        EblanCaveMiab,
+
+        [GateType(GateType.None)]
+        [Description("Upper Bab-il MIAB")]
+        UpperBabilMiab,
+
+        [GateType(GateType.None)]
+        [Description("Giant of Bab-il MIAB")]
+        LastArm,
+
+        [GatedBy(KeyItem.Hook)]
         [GatedBy(KeyItem.MagmaKey)]
         [GateType(GateType.Or)]
         [Description("Town of Monsters chest item")]
@@ -136,6 +173,11 @@ namespace FreeSpoilerAnalyzer.Enums
         [Description("Cave Bahamut item")]
         [World(World.Moon)]
         CaveBahamut,
+
+        [GatedBy(KeyItem.DarknessCrystal)]
+        [Description("Lunar Path MIAB")]
+        [World(World.Moon)]
+        HairDryers,
 
         [GatedBy(KeyItem.DarknessCrystal)]
         [Description("Lunar Subterrane altar 1 (Murasame slot)")]
@@ -166,6 +208,6 @@ namespace FreeSpoilerAnalyzer.Enums
         [Description("Lunar Subterrane altar 4 (Masamune slot)")]
         [World(World.Moon)]
         MasamuneAltar,
-        
+
     }
 }
