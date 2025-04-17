@@ -57,6 +57,7 @@ namespace FreeSpoilerAnalyzer.Enums
         [GatedBy(KeyItem.MagmaKey)]
         [GateType(GateType.Or)]
         [Description("Dwarf Castle hospital item")]
+        [World(World.Underworld)]
         BedCid,
 
         [GatedBy(KeyItem.Hook)]
@@ -126,6 +127,7 @@ namespace FreeSpoilerAnalyzer.Enums
         [GatedBy(KeyItem.Adamant)]
         [GatedBy(KeyItem.LegendSword)]
         [Description("Rat Tail trade item")]
+        [World(World.Underworld)]
         ForgeItem,
 
         [GateType(GateType.None)]
@@ -136,11 +138,11 @@ namespace FreeSpoilerAnalyzer.Enums
         [Description("Tower of Zot MIAB")]
         FlameDog,
 
-        [GateType(GateType.None)]
+        [GatedBy(KeyItem.Hook)]
         [Description("Cave Eblan MIAB")]
         EblanCaveMiab,
 
-        [GateType(GateType.None)]
+        [GatedBy(KeyItem.Hook)]
         [Description("Upper Bab-il MIAB")]
         UpperBabilMiab,
 

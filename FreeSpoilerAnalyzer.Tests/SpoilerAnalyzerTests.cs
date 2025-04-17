@@ -10,10 +10,10 @@ namespace FreeSpoilerAnalyzer.Tests
         {
             _analyzer = new SpoilerAnalyzer();
         }
-        
+
 
         [Fact]
-        public void CorrectlyAnalyzes_RatTail_UndergroundGate_OnlyOneUnderground()
+        public void ViaUnderground_CorrectlyAnalyzes_RatTail_UndergroundGate_OnlyOneUnderground()
         {
             var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
             {
@@ -28,7 +28,7 @@ namespace FreeSpoilerAnalyzer.Tests
         }
 
         [Fact]
-        public void CorrectlyAnalyzes_RatTail_UndergroundGate_NeithereUnderground()
+        public void ViaUnderground_CorrectlyAnalyzes_RatTail_UndergroundGate_NeitherUnderground()
         {
             var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
             {
@@ -43,7 +43,7 @@ namespace FreeSpoilerAnalyzer.Tests
         }
 
         [Fact]
-        public void CorrectlyAnalyzes_RatTail_UndergroundGate_OneUnderground_ComplexSetup()
+        public void ViaUnderground_CorrectlyAnalyzes_RatTail_UndergroundGate_OneUnderground_ComplexSetup()
         {
             var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
             {
@@ -51,10 +51,10 @@ namespace FreeSpoilerAnalyzer.Tests
                 [KeyItem.Hook] = KeyItemLocation.BaronThrone,
                 [KeyItem.Pan] = KeyItemLocation.Antlion,
                 [KeyItem.MagmaKey] = KeyItemLocation.FabulDefense,
-                
+
                 //Underground Requirement
                 [KeyItem.BaronKey] = KeyItemLocation.PanBonk,
-                
+
                 //Darkness Placement
                 [KeyItem.DarknessCrystal] = KeyItemLocation.RatTailTrade
             };
@@ -62,6 +62,59 @@ namespace FreeSpoilerAnalyzer.Tests
             var result = _analyzer.IsViaUnderground(keyItemInfo, KeyItem.DarknessCrystal);
 
             result.Should().BeTrue("Darkness Crystal should be considered found via underground via the Pan bonk");
+        }
+
+        [Fact]
+        public void ViaOverworldOnly_CorrectlyAnalyzes_RatTail_UndergroundGate_NeitherUnderground()
+        {
+            var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
+            {
+                [KeyItem.RatTail] = KeyItemLocation.MtOrdeals,
+                [KeyItem.Hook] = KeyItemLocation.BaronInn,
+                [KeyItem.DarknessCrystal] = KeyItemLocation.RatTailTrade
+            };
+
+            var result = _analyzer.IsViaOverworldOnly(keyItemInfo, KeyItem.DarknessCrystal);
+
+            result.Should().BeTrue("Darkness Crystal should be marked as Overworld Only, because nothing that was underground blocked it");
+        }
+
+        [Fact]
+        public void ViaOverworldOnly_CorrectlyAnalyzes_DwarfCastle_UndergroundGate()
+        {
+            var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
+            {
+                [KeyItem.MagmaKey] = KeyItemLocation.Starting,
+                [KeyItem.Hook] = KeyItemLocation.DwarfCastle,
+                [KeyItem.DarknessCrystal] = KeyItemLocation.RatTailTrade
+            };
+
+            var result = _analyzer.IsViaOverworldOnly(keyItemInfo, KeyItem.Hook);
+
+            result.Should().BeFalse("Hook is at Dwarf Castle, which is underground, so it cannot be understood as Overworld only");
+        }
+
+
+        [Fact]
+        public void ViaOverworldOnly_CorrectlyAnalyzes_RatTail_UndergroundGate_OneUnderground_ComplexSetup()
+        {
+            var keyItemInfo = new Dictionary<KeyItem, KeyItemLocation>
+            {
+                [KeyItem.RatTail] = KeyItemLocation.MtOrdeals,
+                [KeyItem.Hook] = KeyItemLocation.BaronThrone,
+                [KeyItem.Pan] = KeyItemLocation.Antlion,
+                [KeyItem.MagmaKey] = KeyItemLocation.FabulDefense,
+
+                //Underground Requirement
+                [KeyItem.BaronKey] = KeyItemLocation.PanBonk,
+
+                //Darkness Placement
+                [KeyItem.DarknessCrystal] = KeyItemLocation.RatTailTrade
+            };
+
+            var result = _analyzer.IsViaOverworldOnly(keyItemInfo, KeyItem.DarknessCrystal);
+
+            result.Should().BeFalse("Darkness Crystal should not be considered Overworld Only, because Baron Key requires Bonk, and Hook is on Baron Throwe");
         }
 
         [Fact]

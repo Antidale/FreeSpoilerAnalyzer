@@ -7,9 +7,8 @@ using Models = FreeSpoilerAnalyzer.Models;
 
 List<string> folders = [];
 List<string> spoilerLogs = [];
-int MaxConcurrencyLevel = Environment.ProcessorCount;
+int MaxConcurrencyLevel = 1;
 ConcurrentDictionary<(KeyItem, KeyItemLocation), int> darknessLocationCount = new ConcurrentDictionary<(KeyItem, KeyItemLocation), int>(MaxConcurrencyLevel, capacity: 18 * 28);
-
 
 var undergroundCount = 0;
 var fileCount = 0;
