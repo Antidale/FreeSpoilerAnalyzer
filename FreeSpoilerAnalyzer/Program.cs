@@ -4,7 +4,6 @@ using FreeSpoilerAnalyzer.Enums;
 using KeyItemLocation = FreeSpoilerAnalyzer.Enums.KeyItemLocation;
 using Models = FreeSpoilerAnalyzer.Models;
 
-
 //TODO: Add something like System.Command line to allow flags to control operations
 //TODO: alternatively, add in a config file for a similar setup.
 List<string> folders = [];
@@ -19,13 +18,17 @@ var hookOverworldCount = 0;
 var bothOverworldCount = 0;
 var fileCount = 0;
 var lockedPinkTailObjectiveCount = 0;
+ConcurrentDictionary<int, int> elbanMiabLocationCount = new(MaxConcurrencyLevel, capacity: 4);
 
 foreach (var arg in args)
 {
-    var attributes = File.GetAttributes(arg);
-    if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+    if (Directory.Exists(arg))
     {
         folders.Add(arg);
+    }
+    else
+    {
+        Console.WriteLine($"{arg} not found or is not a directory");
     }
 }
 
@@ -55,6 +58,9 @@ await Parallel.ForEachAsync(spoilerLogs, async (log, token) =>
     var analyzer = new SpoilerAnalyzer();
 
     var keyItemPlacement = await parser.ParseKeyItemPlacementAsync(streamReader);
+
+    var seedEblanKiCount = keyItemPlacement.Values.Count(x => x == KeyItemLocation.EblanCastleMiab);
+    elbanMiabLocationCount.AddOrUpdate(seedEblanKiCount, 1, (k, v) => v + 1);
 
     var isMagmaUnderground = analyzer.IsViaOverworldOnly(keyItemPlacement, KeyItem.MagmaKey);
     var isHookUnderground = analyzer.IsViaOverworldOnly(keyItemPlacement, KeyItem.Hook);
@@ -95,5 +101,6 @@ await Parallel.ForEachAsync(spoilerLogs, async (log, token) =>
 Reporter.ReportDarknessUndergroundPercentage(fileCount, bothOverworldCount, magmaOverworldCount, hookOverworldCount);
 
 Reporter.ReportKeyItemLocations(keyItemLocationCount.ToDictionary(), fileCount);
+Reporter.ReportEblanKiCount(elbanMiabLocationCount.ToDictionary());
 // /* Uncomment to write out how many seeds have an uncompletable trade pink tail objective */
 // Reporter.ReportLockedPinkTailObjectiveCount(lockedPinkTailObjectiveCount);

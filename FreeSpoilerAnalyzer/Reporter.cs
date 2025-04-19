@@ -32,4 +32,14 @@ Percentage: {100.0 * (double)hookOverworldCount / (double)totalFileCount}
     {
         Console.WriteLine($"Pink Tail Trade was locked behind Pink tail {count} times");
     }
+
+    public static void ReportEblanKiCount(Dictionary<int, int> eblanKiCounts)
+    {
+
+        Console.WriteLine($"Eblan Castle KI counts:");
+        foreach (var pair in eblanKiCounts)
+        {
+            Console.WriteLine($"\t{pair.Key} KI {pair.Value} times");
+        }
+    }
 }
