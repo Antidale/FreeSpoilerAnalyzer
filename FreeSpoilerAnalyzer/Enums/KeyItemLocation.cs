@@ -53,7 +53,8 @@ namespace FreeSpoilerAnalyzer.Enums
         [Description("Edward/Toroia item")]
         Edward,
 
-        [GateType(GateType.BossLocation)]
+        [GatedBy(KeyItem.Package)] // use for knofree:package
+        // [GateType(GateType.BossLocation)] //use for normal knofree
         [Description("D.Mist/Rydia's Mom item")]
         DMist,
 
