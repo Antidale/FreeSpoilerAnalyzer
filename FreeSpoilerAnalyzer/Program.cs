@@ -12,6 +12,7 @@ List<string> spoilerLogs = [];
 int MaxConcurrencyLevel = Environment.ProcessorCount;
 ConcurrentDictionary<(KeyItem, KeyItemLocation), int> keyItemLocationCount = new(MaxConcurrencyLevel, capacity: 18 * 28);
 
+//TODO: Add a class/record/struct for holding this information
 var undergroundCount = 0;
 var magmaOverworldCount = 0;
 var hookOverworldCount = 0;
@@ -89,7 +90,10 @@ await Parallel.ForEachAsync(spoilerLogs, async (log, token) =>
     }
 });
 
+//If the flagset has knofree:package on, make sure to edit the KeyItemLocation entry for the package
+//Also, this does not correctly handle bstandard/knofree, since I don't include boss info in the parsing or analysis currently.
 Reporter.ReportDarknessUndergroundPercentage(fileCount, bothOverworldCount, magmaOverworldCount, hookOverworldCount);
+
 Reporter.ReportKeyItemLocations(keyItemLocationCount.ToDictionary(), fileCount);
 // /* Uncomment to write out how many seeds have an uncompletable trade pink tail objective */
 // Reporter.ReportLockedPinkTailObjectiveCount(lockedPinkTailObjectiveCount);
