@@ -1,17 +1,23 @@
 ﻿using System.Collections.Concurrent;
 using FreeSpoilerAnalyzer;
 using FreeSpoilerAnalyzer.Enums;
-using FreeSpoilerAnalyzer.Extensions;
 using KeyItemLocation = FreeSpoilerAnalyzer.Enums.KeyItemLocation;
 using Models = FreeSpoilerAnalyzer.Models;
 
+
+//TODO: Add something like System.Command line to allow flags to control operations
+//TODO: alternatively, add in a config file for a similar setup.
 List<string> folders = [];
 List<string> spoilerLogs = [];
-int MaxConcurrencyLevel = 1;
-ConcurrentDictionary<(KeyItem, KeyItemLocation), int> darknessLocationCount = new ConcurrentDictionary<(KeyItem, KeyItemLocation), int>(MaxConcurrencyLevel, capacity: 18 * 28);
+int MaxConcurrencyLevel = Environment.ProcessorCount;
+ConcurrentDictionary<(KeyItem, KeyItemLocation), int> keyItemLocationCount = new(MaxConcurrencyLevel, capacity: 18 * 28);
 
 var undergroundCount = 0;
+var magmaOverworldCount = 0;
+var hookOverworldCount = 0;
+var bothOverworldCount = 0;
 var fileCount = 0;
+var lockedPinkTailObjectiveCount = 0;
 
 foreach (var arg in args)
 {
@@ -37,63 +43,53 @@ if (spoilerLogs.Count < 100)
     return;
 }
 
-
-
 Console.WriteLine($"Starting to analyze {spoilerLogs.Count} logs from {string.Join(", ", folders)}");
+
+var stuff = new List<Models.KeyItemLocation>();
 
 await Parallel.ForEachAsync(spoilerLogs, async (log, token) =>
 {
-    using (var streamReader = new StreamReader(log))
+    using var streamReader = new StreamReader(log);
+    var parser = new SpoilerParser();
+    var analyzer = new SpoilerAnalyzer();
+
+    var keyItemPlacement = await parser.ParseKeyItemPlacementAsync(streamReader);
+
+    var isMagmaUnderground = analyzer.IsViaOverworldOnly(keyItemPlacement, KeyItem.MagmaKey);
+    var isHookUnderground = analyzer.IsViaOverworldOnly(keyItemPlacement, KeyItem.Hook);
+
+    if (isMagmaUnderground) { Interlocked.Increment(ref magmaOverworldCount); }
+    if (isHookUnderground) { Interlocked.Increment(ref hookOverworldCount); }
+    if (isHookUnderground && isMagmaUnderground) { Interlocked.Increment(ref bothOverworldCount); }
+
+    Interlocked.Increment(ref fileCount);
+
+    if (fileCount % 2000 == 0)
     {
-        var parser = new SpoilerParser();
-        var analyzer = new SpoilerAnalyzer();
-        var metadata = await parser.GetSpoilerMetadata(streamReader);
-        // await dataaseHelper.DbConnection.InsertAsync(metadata);
-        var keyItemPlacement = await parser.ParseKeyItemPlacementAsync(streamReader);
-        var models = keyItemPlacement.Select(x => new Models.KeyItemLocation
-        {
-            Seed = metadata.Seed,
-            KeyItem = x.Key.ToString(),
-            Location = x.Value.ToString()
-        });
+        Console.WriteLine($"analyzed {fileCount} logs so far");
+    }
 
-        // if (analyzer.IsViaUnderground(keyItemPlacement, KeyItem.DarknessCrystal)) { Interlocked.Increment(ref undergroundCount); };
-        Interlocked.Increment(ref fileCount);
+    foreach (var itemLocationPair in keyItemPlacement)
+    {
+        keyItemLocationCount.AddOrUpdate((itemLocationPair.Key, itemLocationPair.Value), 1, (k, v) => v + 1);
 
-        if (fileCount % 2000 == 0)
-        {
-            Console.WriteLine($"analyzed {fileCount} logs so far");
-        }
-        foreach (var itemLocationPair in keyItemPlacement)
-        {
-            darknessLocationCount.AddOrUpdate((itemLocationPair.Key, itemLocationPair.Value), 1, (k, v) => v + 1);
-        }
-
+        /*
+            uncomment below to write out seeds that have a self locking pink tail, or an uncompletable trade the pink tail objective.
+        */
+        // if (itemLocationPair.Key == KeyItem.PinkTail && itemLocationPair.Value == KeyItemLocation.PinkTailTrade)
+        // {
+        //     Console.WriteLine($"self locking pink tail: {log}");
+        //     var isLockedObjective = await parser.HasPinkTailObjective(streamReader);
+        //     if (isLockedObjective)
+        //     {
+        //         Interlocked.Increment(ref lockedPinkTailObjectiveCount);
+        //         Console.WriteLine($"{log} has locked objective");
+        //     }
+        // }
     }
 });
 
-
-ReportDarknessLocations(darknessLocationCount.ToDictionary(), fileCount);
-Console.WriteLine("\r\nPress any key to close");
-
-Console.ReadKey();
-
-
-static void ReportDarknessLocations(Dictionary<(KeyItem, KeyItemLocation), int> locationData, int fileCount)
-{
-    foreach (var pair in locationData)
-    {
-        if (pair.Value == 0)
-        {
-            continue;
-        }
-
-        Console.WriteLine($"{pair.Key.Item1} was at {pair.Key.Item2.GetDescription()} {pair.Value} times at {100.0 * (double)pair.Value / (double)fileCount}% of the time");
-    }
-}
-
-static void ReportDarknessUndergroundPercentage(int totalFileCount, int totalUndergroundCount)
-{
-    Console.WriteLine($"\r\nTotal Files: {totalFileCount}\r\nDarkness via Underground: {totalUndergroundCount}\r\nPercentage: {100.0 * (double)totalUndergroundCount / (double)totalFileCount}");
-}
-
+Reporter.ReportDarknessUndergroundPercentage(fileCount, bothOverworldCount, magmaOverworldCount, hookOverworldCount);
+Reporter.ReportKeyItemLocations(keyItemLocationCount.ToDictionary(), fileCount);
+// /* Uncomment to write out how many seeds have an uncompletable trade pink tail objective */
+// Reporter.ReportLockedPinkTailObjectiveCount(lockedPinkTailObjectiveCount);

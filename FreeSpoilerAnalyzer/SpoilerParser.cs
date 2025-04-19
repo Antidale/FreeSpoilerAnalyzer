@@ -1,7 +1,7 @@
-﻿using FreeSpoilerAnalyzer.Constants;
+﻿using System.Text.RegularExpressions;
+using FreeSpoilerAnalyzer.Constants;
 using FreeSpoilerAnalyzer.Enums;
 using FreeSpoilerAnalyzer.Extensions;
-using System.Text.RegularExpressions;
 using FreeSpoilerAnalyzer.Models;
 using KeyItemLocation = FreeSpoilerAnalyzer.Enums.KeyItemLocation;
 
@@ -15,14 +15,13 @@ namespace FreeSpoilerAnalyzer
             var flagset = "unknown";
 
             var currentLine = await AdvanceToSectionAsync(streamReader, SpoilerConstants.BinaryFlags);
-            
-            
+
             var matches = SpoilerMetadataRegex().Match(currentLine);
             if (matches.Success)
             {
                 flagset = matches.Groups[2].Captures.FirstOrDefault()?.Value ?? flagset;
             }
-            
+
             currentLine = await AdvanceToSectionAsync(streamReader, SpoilerConstants.Seed);
             matches = SpoilerMetadataRegex().Match(currentLine);
             if (matches.Success)
@@ -36,13 +35,13 @@ namespace FreeSpoilerAnalyzer
                 Seed = seed,
             };
         }
-        
+
         public async Task<Dictionary<KeyItem, KeyItemLocation>> ParseKeyItemPlacementAsync(StreamReader streamReader)
         {
             //Default the tracking dictionary to have everything in the overworld
             var keyItems = Enum.GetValues<KeyItem>().Where(x => (int)x > -1).ToDictionary(x => x, y => KeyItemLocation.Starting);
             var keyItemLocationsMap = Enum.GetValues<KeyItemLocation>().ToDictionary(key => key.GetDescription(), value => value);
-            
+
             var currentLine = await AdvanceToSectionAsync(streamReader, SpoilerConstants.KeyItemLocations);
 
             //Read to the section divider, getting KI & World Pairings along the way
@@ -68,14 +67,24 @@ namespace FreeSpoilerAnalyzer
             return keyItems;
         }
 
-        private async Task<string> AdvanceToSectionAsync(StreamReader streamReader, string sectionStart)
+        public async Task<bool> HasPinkTailObjective(StreamReader reader)
+        {
+            var currentLine = await AdvanceToSectionAsync(reader, SpoilerConstants.Objectives);
+            while (currentLine is not null && !currentLine.Contains("Trade away the Pink Tail"))
+            {
+                currentLine = await reader.ReadLineAsync();
+            }
+            return currentLine?.Contains("Pink Tail", StringComparison.InvariantCultureIgnoreCase) ?? false;
+        }
+
+        private async Task<string> AdvanceToSectionAsync(StreamReader streamReader, string sectionStart, string? sectionEnd = null)
         {
             var currentLine = await streamReader.ReadLineAsync();
-            while (currentLine is not null && !currentLine.StartsWith(sectionStart))
+            while (currentLine is not null && !currentLine.StartsWith(sectionStart) && currentLine != sectionEnd)
             {
                 currentLine = await streamReader.ReadLineAsync();
             }
-            
+
             return currentLine ?? string.Empty;
         }
 
