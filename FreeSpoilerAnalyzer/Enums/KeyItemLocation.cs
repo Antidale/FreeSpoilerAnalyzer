@@ -10,6 +10,10 @@ namespace FreeSpoilerAnalyzer.Enums
         Unavailable,
 
         [GateType(GateType.None)]
+        [Description("Objective completion")]
+        ObjectiveCompletion,
+
+        [GateType(GateType.None)]
         [Description("Starting item")]
         Starting,
 
@@ -67,7 +71,7 @@ namespace FreeSpoilerAnalyzer.Enums
         RatTailTrade,
 
         [GatedBy(KeyItem.Hook)]
-        [GatedBy(KeyItem.RatTail)]
+        [GatedBy(KeyItem.PinkTail)]
         [GateType(GateType.And)]
         [Description("Pink Tail trade item")]
         PinkTailTrade,
@@ -126,7 +130,7 @@ namespace FreeSpoilerAnalyzer.Enums
         [GatedBy(KeyItem.RatTail)]
         [GatedBy(KeyItem.Adamant)]
         [GatedBy(KeyItem.LegendSword)]
-        [Description("Rat Tail trade item")]
+        [Description("Kokkol forged item")]
         [World(World.Underworld)]
         ForgeItem,
 
@@ -146,8 +150,9 @@ namespace FreeSpoilerAnalyzer.Enums
         [Description("Upper Bab-il MIAB")]
         UpperBabilMiab,
 
-        [GateType(GateType.None)]
+        [GatedBy(KeyItem.DarknessCrystal)]
         [Description("Giant of Bab-il MIAB")]
+        [World(World.Moon)]
         LastArm,
 
         [GatedBy(KeyItem.Hook)]

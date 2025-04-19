@@ -2,7 +2,7 @@
   "profiles": {
     "FreeSpoilerAnalyzer": {
       "commandName": "Project",
-      "commandLineArgs": "/users/antidale/Desktop/spoilers /users/antidale/Desktop/spoilers2"
+      "commandLineArgs": "/users/antidale/Desktop/popa.spoilers"
     }
   }
 }

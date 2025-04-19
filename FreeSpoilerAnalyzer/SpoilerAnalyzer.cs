@@ -45,9 +45,10 @@ namespace FreeSpoilerAnalyzer
         /// <param name="keyItemInfo"></param>
         /// <param name="keyItem"></param>
         /// <returns></returns>
-        public bool IsViaOverworldOnly(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem)
+        public bool IsViaOverworldOnly(Dictionary<KeyItem, KeyItemLocation> keyItemInfo, KeyItem keyItem, int iterationCount = 0)
         {
-
+            if (iterationCount > 70)
+            { throw new ArgumentException("something's wrong with this seed"); }
             var stuff = Enum.GetValues<KeyItemLocation>().ToFrozenDictionary(key => key, value => value.GetAttributes<GatedByAttribute>().ToArray());
 
             if (!keyItemInfo.TryGetValue(keyItem, out var keyItemLocation)) return false;
@@ -58,11 +59,11 @@ namespace FreeSpoilerAnalyzer
 
 
             var gateType = keyItemLocation.GetAttribute<GateTypeAttribute>();
-
+            iterationCount++;
             return gateType.Type switch
             {
-                GateType.And => KeyItemLocationGating[keyItemLocation].All(x => IsViaOverworldOnly(keyItemInfo, x.GatingItem)),
-                GateType.Or => KeyItemLocationGating[keyItemLocation].Any(x => IsViaOverworldOnly(keyItemInfo, x.GatingItem)),
+                GateType.And => KeyItemLocationGating[keyItemLocation].All(x => IsViaOverworldOnly(keyItemInfo, x.GatingItem, iterationCount)),
+                GateType.Or => KeyItemLocationGating[keyItemLocation].Any(x => IsViaOverworldOnly(keyItemInfo, x.GatingItem, iterationCount)),
                 _ => true
             };
         }
