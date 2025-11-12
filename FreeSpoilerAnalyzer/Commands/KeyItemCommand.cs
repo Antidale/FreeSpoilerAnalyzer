@@ -22,7 +22,7 @@ public class KeyItemCommand : AsyncCommand<KeyItemCommand.Settings>
 
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, [NotNull] Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, [NotNull] Settings settings, CancellationToken token)
     {
         //TODO: Add something like System.Command line to allow flags to control operations
         //TODO: alternatively, add in a config file for a similar setup.
@@ -42,6 +42,7 @@ public class KeyItemCommand : AsyncCommand<KeyItemCommand.Settings>
 
         foreach (var arg in settings.SpoilerFolders)
         {
+
             if (Directory.Exists(arg))
             {
                 folders.Add(arg);
@@ -123,12 +124,10 @@ public class KeyItemCommand : AsyncCommand<KeyItemCommand.Settings>
             Reporter.ReportDarknessUndergroundPercentage(fileCount, bothOverworldCount, magmaOverworldCount, hookOverworldCount);
         }
 
-
         Reporter.ReportKeyItemLocations(keyItemLocationCount.ToDictionary(), fileCount);
         Reporter.ReportEblanKiCount(elbanMiabLocationCount.ToDictionary());
         // /* Uncomment to write out how many seeds have an uncompletable trade pink tail objective */
         // Reporter.ReportLockedPinkTailObjectiveCount(lockedPinkTailObjectiveCount);
-        throw new NotImplementedException();
+        return 0;
     }
-
 }
